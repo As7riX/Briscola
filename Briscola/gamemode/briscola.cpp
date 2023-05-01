@@ -32,6 +32,42 @@ public:
 
 	}
 
+private:
+
+	int minimax(vector<Carta> mano, Carta::semi briscola, bool Turno, int depth, int alpha, int beta) {
+		if (depth == 0 || mano.size() == 1) {
+			return get_hand_point(mano);
+		}
+		if (Turno) {
+			int bestScore = -100;
+			for (int i = 0; i < mano.size(); i++) {
+				vector<Carta> newHand = mano;
+				newHand.erase(newHand.begin() + i);
+				int score = minimax(newHand, briscola, false, depth - 1, alpha, beta);
+				bestScore = max(bestScore, score);
+				alpha = max(alpha, score);
+				if (beta <= alpha) {
+					break;
+				}
+			}
+			return bestScore;
+		}
+		else {
+			int worstScore = 100;
+			for (int i = 0; i < mano.size(); i++) {
+				vector<Carta> newHand = mano;
+				newHand.erase(newHand.begin() + i);
+				int score = minimax(newHand, briscola, true, depth - 1, alpha, beta);
+				worstScore = min(worstScore, score);
+				beta = min(beta, score);
+				if (beta <= alpha) {
+					break;
+				}
+			}
+			return worstScore;
+		}
+	}
+
 };
 
 //funzione controllo vittoria
@@ -235,42 +271,6 @@ int get_hand_point(vector<Carta> mazzo) {
 
 	return point;
 }
-
-int minimax(vector<Carta> mano, Carta::semi briscola, bool Turno, int depth, int alpha, int beta) {
-	if (depth == 0 || mano.size() == 1) {
-		return get_hand_point(mano);
-	}
-	if (Turno) {
-		int bestScore = -100;
-		for (int i = 0; i < mano.size(); i++) {
-			vector<Carta> newHand = mano;
-			newHand.erase(newHand.begin() + i);
-			int score = minimax(newHand, briscola, false, depth - 1, alpha, beta);
-			bestScore = max(bestScore, score);
-			alpha = max(alpha, score);
-			if (beta <= alpha) {
-				break;
-			}
-		}
-		return bestScore;
-	}
-	else {
-		int worstScore = 100;
-		for (int i = 0; i < mano.size(); i++) {
-			vector<Carta> newHand = mano;
-			newHand.erase(newHand.begin() + i);
-			int score = minimax(newHand, briscola, true, depth - 1, alpha, beta);
-			worstScore = min(worstScore, score);
-			beta = min(beta, score);
-			if (beta <= alpha) {
-				break;
-			}
-		}
-		return worstScore;
-	}
-}
-
-
 
 //gamemode standard 1vNPC
 void game_briscola_bot() {
